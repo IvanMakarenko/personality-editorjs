@@ -74,20 +74,26 @@ Personality Tool supports these configuration parameters:
 | endpoint | `string` | **Required** Endpoint for photo uploading. |
 | field | `string` | (default: `image`) Name of uploaded image field in POST request |
 | types | `string` | (default: `image/*`) Mime-types of files that can be [accepted with file selection](https://github.com/codex-team/ajax#accept-string).|
+| additionalRequestData | object | Object with any data you want to send with uploading requests |
+| additionalRequestHeaders | object | Object with any custom headers which will be added to request. [See example](https://github.com/codex-team/ajax/blob/e5bc2a2391a18574c88b7ecd6508c29974c3e27f/README.md#headers-object) |
 | namePlaceholder | `string` | (default: `Name`) Placeholder for name field |
 | descriptionPlaceholder | `string` | (default: `Description`) Placeholder for description field |
 | linkPlaceholder | `string` | (default: `Link`) Link field placeholder |
+| photoCaptionPlaceholder | `string` | (default: `Caption`) Placeholder for photo`s caption field |
+| photoSubCaptionPlaceholder | `string` | (default: `Sub Caption`) Placeholder for photo`s sub caption field |
 
 ## Output data
 
 This Tool returns `data` with following format
 
-| Field          | Type      | Description                      |
-| -------------- | --------- | ---------------------------------|
-| name           | `string`  | Person's name                    |
-| description    | `string`  | Person's description             |
-| link           | `string`  | Link to person's website         |
-| photo          | `string`  | Uploaded image url from backend. |
+| Field           | Type      | Description                      |
+| --------------- | --------- | ---------------------------------|
+| name            | `string`  | Person's name                    |
+| description     | `string`  | Person's description             |
+| link            | `string`  | Link to person's website         |
+| photo           | `string`  | Uploaded image url from backend. |
+| photoCaption    | `string`  | Photo`s caption                  |
+| photoSubCaption | `string`  | Photo`s sub caption              |
 
 ```json
 {
@@ -96,7 +102,9 @@ This Tool returns `data` with following format
         "name" : "Elon Musk",
         "description" : "Elon Reeve Musk FRS is a technology entrepreneur, investor, and engineer. He holds South African, Canadian, and U.S. citizenship and is the founder",
         "link" : "https://twitter.com/elonmusk",
-        "photo" : "https://capella.pics/3c0e1b97-bc56-4961-b54e-2a6c2c3260f2.jpg"
+        "photo" : "https://capella.pics/3c0e1b97-bc56-4961-b54e-2a6c2c3260f2.jpg",
+        "photoCaption" : "Ivan Makarenko",
+        "photoSubCaption" : "Since 2020"
     }
 }
 ```
