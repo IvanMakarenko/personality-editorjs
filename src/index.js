@@ -14,6 +14,8 @@ const LOADER_DELAY = 500;
  * @property {string} description - person's description
  * @property {string} link - link to person's website
  * @property {string} photo - person's photo url
+ * @property {string} photoCaption — photo's caption
+ * @property {string} photoSubCaption — photo's sub caption
  */
 
 /**
@@ -23,6 +25,8 @@ const LOADER_DELAY = 500;
  * @property {string} field - field name for uploaded image
  * @property {string} types - available mime-types
  * @property {string} namePlaceholder - placeholder for name field
+ * @property {string} photoCaptionPlaceholder — placeholder for photo's caption
+ * @property {string} photoSubCaptionPlaceholder — placeholder for photo's sub caption
  * @property {string} descriptionPlaceholder - description placeholder
  * @property {string} linkPlaceholder - link placeholder
  */
@@ -54,7 +58,9 @@ export default class Personality {
       name: null,
       description: null,
       link: null,
-      photo: null
+      photo: null,
+      photoCaption: null,
+      photoSubCaption: null,
     };
 
     this.config = {
@@ -63,7 +69,11 @@ export default class Personality {
       types: config.types || 'image/*',
       namePlaceholder: config.namePlaceholder || 'Name',
       descriptionPlaceholder: config.descriptionPlaceholder || 'Description',
-      linkPlaceholder: config.linkPlaceholder || 'Link'
+      linkPlaceholder: config.linkPlaceholder || 'Link',
+      photoCaptionPlaceholder: config.photoCaptionPlaceholder || 'Caption',
+      photoSubCaptionPlaceholder: config.photoSubCaptionPlaceholder || 'Sub Caption',
+      additionalRequestData: config.additionalRequestData || null,
+      additionalRequestHeaders: config.additionalRequestHeaders || null,
     };
 
     /**
@@ -77,7 +87,7 @@ export default class Personality {
     this.uploader = new Uploader({
       config: this.config,
       onUpload: (response) => this.onUpload(response),
-      onError: (error) => this.uploadingFailed(error)
+      onError: (error) => this.uploadingFailed(error),
     });
   }
 
@@ -89,19 +99,20 @@ export default class Personality {
   static get toolbox() {
     return {
       icon: ToolboxIcon,
-      title: 'Personality'
+      title: 'Personality',
     };
   }
 
   /**
    * File uploading callback
+   *
    * @param {UploadResponseFormat} response
    */
   onUpload(response) {
     const { body: { success, file } } = response;
 
     if (success && file && file.url) {
-      this.data.photo = file.url;
+      Object.assign(this.data, { photo: file.url });
 
       this.showFullImage();
     }
@@ -137,6 +148,7 @@ export default class Personality {
 
   /**
    * If file uploading failed, remove loader and show notification
+   *
    * @param {string} errorMessage -  error message
    */
   uploadingFailed(errorMessage) {
@@ -144,7 +156,7 @@ export default class Personality {
 
     this.api.notifier.show({
       message: errorMessage,
-      style: 'error'
+      style: 'error',
     });
   }
 
@@ -162,21 +174,27 @@ export default class Personality {
        */
       wrapper: 'cdx-personality',
       name: 'cdx-personality__name',
+      photoWrapper: 'cdx-personality__photo_weapper',
       photo: 'cdx-personality__photo',
+      photoCaption: 'cdx-personality__photo_caption',
+      photoSubCaption: 'cdx-personality__photo_subcaption',
       link: 'cdx-personality__link',
-      description: 'cdx-personality__description'
+      description: 'cdx-personality__description',
     };
   }
 
   /**
    * Return Block data
+   *
    * @param {HTMLElement} toolsContent
-   * @return {PersonalityToolData}
+   * @returns {PersonalityToolData}
    */
   save(toolsContent) {
     const name = toolsContent.querySelector(`.${this.CSS.name}`).textContent;
     const description = toolsContent.querySelector(`.${this.CSS.description}`).textContent;
     const link = toolsContent.querySelector(`.${this.CSS.link}`).textContent;
+    const photoCaption = toolsContent.querySelector(`.${this.CSS.photoCaption}`).textContent;
+    const photoSubCaption = toolsContent.querySelector(`.${this.CSS.photoSubCaption}`).textContent;
     const photo = this.data.photo;
 
     /**
@@ -186,7 +204,9 @@ export default class Personality {
       name: name.trim() || '',
       description: description.trim() || '',
       link: link.trim() || '',
-      photo: photo || ''
+      photo: photo || '',
+      photoCaption: photoCaption.trim() || '',
+      photoSubCaption: photoSubCaption.trim() || '',
     });
 
     return this.data;
@@ -194,58 +214,77 @@ export default class Personality {
 
   /**
    * Renders Block content
-   * @return {HTMLDivElement}
+   *
+   * @returns {HTMLDivElement}
    */
   render() {
-    const { name, description, photo, link } = this.data;
+    const { name, description, photo, link, photoCaption, photoSubCaption } = this.data;
 
     this.nodes.wrapper = this.make('div', this.CSS.wrapper);
 
     this.nodes.name = this.make('div', this.CSS.name, {
-      contentEditable: true
+      contentEditable: true,
     });
+    this.nodes.name.dataset.placeholder = this.config.namePlaceholder;
 
     this.nodes.description = this.make('div', this.CSS.description, {
-      contentEditable: true
+      contentEditable: true,
     });
+    this.nodes.description.dataset.placeholder = this.config.descriptionPlaceholder;
 
     this.nodes.link = this.make('div', this.CSS.link, {
-      contentEditable: true
+      contentEditable: true,
     });
+    this.nodes.link.dataset.placeholder = this.config.linkPlaceholder;
+
+    this.nodes.photoWrapper = this.make('div', this.CSS.photoWrapper);
 
     this.nodes.photo = this.make('div', this.CSS.photo);
+
+    this.nodes.photoCaption = this.make('div', this.CSS.photoCaption, {
+      contentEditable: true,
+    });
+    this.nodes.photoCaption.dataset.placeholder = this.config.photoCaptionPlaceholder;
+
+    this.nodes.photoSubCaption = this.make('div', this.CSS.photoSubCaption, {
+      contentEditable: true,
+    });
+    this.nodes.photoSubCaption.dataset.placeholder = this.config.photoSubCaptionPlaceholder;
 
     if (photo) {
       this.nodes.photo.style.background = `url('${photo}') center center / cover no-repeat`;
     }
+    if (photoCaption) {
+      this.nodes.photoCaption.textContent = photoCaption;
+    }
+    if (photoSubCaption) {
+      this.nodes.photoSubCaption.textContent = photoSubCaption;
+    }
 
     if (description) {
       this.nodes.description.textContent = description;
-    } else {
-      this.nodes.description.dataset.placeholder = this.config.descriptionPlaceholder;
     }
 
     if (name) {
       this.nodes.name.textContent = name;
-    } else {
-      this.nodes.name.dataset.placeholder = this.config.namePlaceholder;
     }
 
     if (link) {
       this.nodes.link.textContent = link;
-    } else {
-      this.nodes.link.dataset.placeholder = this.config.linkPlaceholder;
     }
 
     this.nodes.photo.addEventListener('click', () => {
       this.uploader.uploadSelectedFile({
         onPreview: () => {
           this.addLoader();
-        }
+        },
       });
     });
 
-    this.nodes.wrapper.appendChild(this.nodes.photo);
+    this.nodes.photoWrapper.appendChild(this.nodes.photo);
+    this.nodes.photoWrapper.appendChild(this.nodes.photoCaption);
+    this.nodes.photoWrapper.appendChild(this.nodes.photoSubCaption);
+    this.nodes.wrapper.appendChild(this.nodes.photoWrapper);
     this.nodes.wrapper.appendChild(this.nodes.name);
     this.nodes.wrapper.appendChild(this.nodes.description);
     this.nodes.wrapper.appendChild(this.nodes.link);
@@ -255,6 +294,7 @@ export default class Personality {
 
   /**
    * Validate saved data
+   *
    * @param {PersonalityToolData} savedData - tool's data
    * @returns {boolean} - validation result
    */
@@ -270,10 +310,11 @@ export default class Personality {
 
   /**
    * Helper method for elements creation
+   *
    * @param tagName
    * @param classNames
    * @param attributes
-   * @return {HTMLElement}
+   * @returns {HTMLElement}
    */
   make(tagName, classNames = null, attributes = {}) {
     const el = document.createElement(tagName);
