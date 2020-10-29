@@ -9,6 +9,7 @@ Personality Tool for the [Editor.js](https://editorjs.io).
 ## Features
 
 This tool allows you to create Personality block in your articles.
+Realize i18 translations.
 
 **Note** Tool requires server-side implementation for image uploading. See [backend response format](#server-format) for more details.
 
@@ -76,11 +77,6 @@ Personality Tool supports these configuration parameters:
 | types | `string` | (default: `image/*`) Mime-types of files that can be [accepted with file selection](https://github.com/codex-team/ajax#accept-string).|
 | additionalRequestData | object | Object with any data you want to send with uploading requests |
 | additionalRequestHeaders | object | Object with any custom headers which will be added to request. [See example](https://github.com/codex-team/ajax/blob/e5bc2a2391a18574c88b7ecd6508c29974c3e27f/README.md#headers-object) |
-| namePlaceholder | `string` | (default: `Name`) Placeholder for name field |
-| descriptionPlaceholder | `string` | (default: `Description`) Placeholder for description field |
-| linkPlaceholder | `string` | (default: `Link`) Link field placeholder |
-| photoCaptionPlaceholder | `string` | (default: `Caption`) Placeholder for photo`s caption field |
-| photoSubCaptionPlaceholder | `string` | (default: `Sub Caption`) Placeholder for photo`s sub caption field |
 
 ## Output data
 
