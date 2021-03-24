@@ -190,12 +190,28 @@ export default class Personality {
    * @returns {PersonalityToolData}
    */
   save(toolsContent) {
-    const name = toolsContent.querySelector(`.${this.CSS.name}`).textContent;
-    const description = toolsContent.querySelector(`.${this.CSS.description}`).textContent;
-    const link = toolsContent.querySelector(`.${this.CSS.link}`).textContent;
-    const photoCaption = toolsContent.querySelector(`.${this.CSS.photoCaption}`).textContent;
-    const photoSubCaption = toolsContent.querySelector(`.${this.CSS.photoSubCaption}`).textContent;
+    const name = toolsContent.querySelector(`.${this.CSS.name}`).textContent.replace(/<br>$/, '');
+    const description = toolsContent.querySelector(`.${this.CSS.description}`).textContent.replace(/<br>$/, '');
+    const link = toolsContent.querySelector(`.${this.CSS.link}`).textContent.replace(/<br>$/, '');
+    const photoCaption = toolsContent.querySelector(`.${this.CSS.photoCaption}`).textContent.replace(/<br>$/, '');
+    const photoSubCaption = toolsContent.querySelector(`.${this.CSS.photoSubCaption}`).textContent.replace(/<br>$/, '');
     const photo = this.data.photo;
+
+    if (name == '') {
+      toolsContent.querySelector(`.${this.CSS.name}`).textContent = '';
+    }
+    if (description == '') {
+      toolsContent.querySelector(`.${this.CSS.description}`).textContent = '';
+    }
+    if (link == '') {
+      toolsContent.querySelector(`.${this.CSS.link}`).textContent = '';
+    }
+    if (photoCaption == '') {
+      toolsContent.querySelector(`.${this.CSS.photoCaption}`).textContent = '';
+    }
+    if (photoSubCaption == '') {
+      toolsContent.querySelector(`.${this.CSS.photoSubCaption}`).textContent = '';
+    }
 
     /**
      * Fill missing fields with empty strings
